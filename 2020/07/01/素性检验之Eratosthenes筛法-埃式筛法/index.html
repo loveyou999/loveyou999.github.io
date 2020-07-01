@@ -5,17 +5,17 @@
   
 
   
-  <title>数据结构之二叉树 | Hi</title>
+  <title>素性检验之Eratosthenes筛法(埃式筛法) | Hi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#include&lt;iostream&gt; #include&lt;stdio.h&gt; using namespace std; typedef struct tree { char data; tree *leftchild; tree *rightchild; }*BiTree,BiTNode; &#x2F;&#x2F;创建二叉树，以#号代表空  void CreatBiTree(BiTree &amp;amp">
+  <meta name="description" content="#include &lt;stdio.h&gt; #include &lt;iostream&gt; using namespace std; int main() {     int n;     cin&gt;&gt;n;     int i &#x3D; 0; &#x2F;&#x2F; 表示整数和对应的下标     int j &#x3D; 0; &#x2F;&#x2F; 表示正在处理的j的倍数从2开始到j * k &lt; SIZE.     in">
 <meta property="og:type" content="article">
-<meta property="og:title" content="数据结构之二叉树">
-<meta property="og:url" content="http://yoursite.com/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/index.html">
+<meta property="og:title" content="素性检验之Eratosthenes筛法(埃式筛法)">
+<meta property="og:url" content="http://yoursite.com/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/index.html">
 <meta property="og:site_name" content="Hi">
-<meta property="og:description" content="#include&lt;iostream&gt; #include&lt;stdio.h&gt; using namespace std; typedef struct tree { char data; tree *leftchild; tree *rightchild; }*BiTree,BiTNode; &#x2F;&#x2F;创建二叉树，以#号代表空  void CreatBiTree(BiTree &amp;amp">
+<meta property="og:description" content="#include &lt;stdio.h&gt; #include &lt;iostream&gt; using namespace std; int main() {     int n;     cin&gt;&gt;n;     int i &#x3D; 0; &#x2F;&#x2F; 表示整数和对应的下标     int j &#x3D; 0; &#x2F;&#x2F; 表示正在处理的j的倍数从2开始到j * k &lt; SIZE.     in">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-07-01T12:27:35.000Z">
-<meta property="article:modified_time" content="2020-07-01T12:28:39.003Z">
+<meta property="article:published_time" content="2020-07-01T12:37:45.000Z">
+<meta property="article:modified_time" content="2020-07-01T12:39:59.157Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -66,10 +66,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-数据结构之二叉树" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-素性检验之Eratosthenes筛法-埃式筛法" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/" class="article-date">
-  <time datetime="2020-07-01T12:27:35.000Z" itemprop="datePublished">2020-07-01</time>
+    <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/" class="article-date">
+  <time datetime="2020-07-01T12:37:45.000Z" itemprop="datePublished">2020-07-01</time>
 </a>
     
   </div>
@@ -80,7 +80,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      数据结构之二叉树
+      素性检验之Eratosthenes筛法(埃式筛法)
     </h1>
   
 
@@ -88,148 +88,49 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <pre><code>#include&lt;iostream&gt;
-#include&lt;stdio.h&gt;
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;iostream&gt;
 using namespace std;
-typedef struct tree
-{
-char data;
-tree *leftchild;
-tree *rightchild;
-}*BiTree,BiTNode;
-//创建二叉树，以#号代表空 
-void CreatBiTree(BiTree &amp;T)
-{
-char ch;
-cin&gt;&gt;ch;
-if(ch==&apos;#&apos;)
-    T=NULL;
-else
-{
-    T=new BiTNode;
-    T-&gt;data=ch;
-    CreatBiTree(T-&gt;leftchild);
-    CreatBiTree(T-&gt;rightchild);
-}
-}
-//先序 
-void DLR(BiTree &amp;T)
-{
-if(T)
-{
-    cout&lt;&lt;T-&gt;data;
-    DLR(T-&gt;leftchild);
-    DLR(T-&gt;rightchild);
-}
-}
-//中序 
-void LDR(BiTree &amp;T)
-{
-
-if(T)
-{
-    LDR(T-&gt;leftchild);
-    cout&lt;&lt;T-&gt;data;
-    LDR(T-&gt;rightchild);
-}
-}
-//后序 
-void LRD(BiTree &amp;T)
-{
-if(T)
-{
-    LRD(T-&gt;leftchild);
-
-    LRD(T-&gt;rightchild);
-    cout&lt;&lt;T-&gt;data;
-}
-}
-//层序
-void floor(BiTree &amp;T)  
-{
-BiTree t[100];
-int i=0,j=0;
-t[i++]=T;
-while (i&gt;j)
-{
-    if (t[j])
-    {
-        cout&lt;&lt;t[j]-&gt;data;
-        t[i++]=t[j]-&gt;leftchild;
-        t[i++]=t[j]-&gt;rightchild;
+int main() {
+    int n;
+    cin&gt;&gt;n;
+    int i = 0; // 表示整数和对应的下标
+    int j = 0; // 表示正在处理的j的倍数从2开始到j * k &lt; SIZE.
+    int flag[n] = {0}; // 下标表示整数内容,标识是否是质数.
+    flag[0] = flag[1] = 0; // 0和1不是质数.
+    for(i=2;i&lt;=n;++i )
+    { // 除了0和1其它默认全是质数.
+    flag[i] = 1;
     }
-    j++;
-}
-}
-
-//深度 
-int  Depth(BiTree &amp;T)
-{
-if(!T)
-return 0;
-else
-{
-    int m,n;
-    m=Depth(T-&gt;leftchild);//左子树深度m 
-    n=Depth(T-&gt;rightchild);//右子树深度n 
-    if(m&gt;n)
-    return m+1;
+    // 处理数的倍数.
+    for(i=0;i&lt;=n;++i) 
+    {
+        if(1==flag[i]) 
+        {
+            for(j=2;i*j&lt;=n;++j) 
+            {
+                flag[i*j]=0;
+            }        
+        }
+    }
+    // 打印质数.
+    /*for(i=0;i&lt;=n;++i) 
+    {
+        if(1==flag[i]) 
+        {
+            cout&lt;&lt;i&lt;&lt;endl;
+        }
+    }*/
+    if(flag[n]==1)
+        cout&lt;&lt;&quot;是素数&quot;&lt;&lt;endl;
     else
-    return n+1;
-}
-}
-
-//结点
-int NodeCount(BiTree &amp;T)
-{
-if(!T)
+        cout&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
     return 0;
-    int n=NodeCount(T-&gt;leftchild)+NodeCount(T-&gt;rightchild)+1;
-    //左子树+右子树+根节点 
-return n;
-}
-//叶节点数 
-void yecount(BiTree &amp;T)
-{
-
-if(T)
-{
-    if(T-&gt;leftchild==NULL&amp;&amp;T-&gt;rightchild==NULL)
-    {
-        i++;
-    }
-    else
-    {
-        yecount(T-&gt;leftchild);
-        yecount(T-&gt;rightchild);
-    }
-}
-}
-//主函数
-int main()
-{
-BiTree T;
-cout&lt;&lt;&quot;请输入一颗二叉树&quot;&lt;&lt;endl;
-CreatBiTree(T);
-cout&lt;&lt;&quot;\n先序遍历是&quot;&lt;&lt;endl;
-DLR(T);
-
-cout&lt;&lt;&quot;\n中序遍历是&quot;&lt;&lt;endl; 
-LDR(T);
-cout&lt;&lt;&quot;\n后序遍历是&quot;&lt;&lt;endl; 
-LRD(T);
-cout&lt;&lt;&quot;\n层序遍历是&quot;&lt;&lt;endl;
-floor(T); 
-cout&lt;&lt;&quot;\n二叉树的深度是&quot;&lt;&lt;endl;
-cout&lt;&lt;Depth(T);
-cout&lt;&lt;&quot;\n二叉树的结点数是&quot;&lt;&lt;endl; 
-cout&lt;&lt;NodeCount(T);
-return 0;
 }</code></pre>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/" data-id="ckc3cc67p000554v3eyoi2mc4" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/" data-id="ckc3ctj070003wkv3dj8b9ic2" class="article-share-link">Share</a>
       
       
     </footer>
@@ -238,19 +139,19 @@ return 0;
     
 <nav id="article-nav">
   
-    <a href="/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Python之turtle库
+          素性检验之MillerRabbin(米勒-拉宾)
         
       </div>
     </a>
   
   
-    <a href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">数据结构1-2约瑟夫</div>
+      <div class="article-nav-title">centos7上安装vpp</div>
     </a>
   
 </nav>

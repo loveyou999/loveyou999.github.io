@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>D-H秘钥交换协议 | Hi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="1.用rand库： #include&lt;iostream&gt; #include&lt;time.h&gt;   #include&lt;stdlib.h&gt;   #include&lt;math.h&gt; #include&lt;cstdio&gt; using namespace std;  long long mulmod(long long a, long long b, lo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="D-H秘钥交换协议">
+<meta property="og:url" content="http://yoursite.com/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:site_name" content="Hi">
+<meta property="og:description" content="1.用rand库： #include&lt;iostream&gt; #include&lt;time.h&gt;   #include&lt;stdlib.h&gt;   #include&lt;math.h&gt; #include&lt;cstdio&gt; using namespace std;  long long mulmod(long long a, long long b, lo">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-01T12:41:53.000Z">
+<meta property="article:modified_time" content="2020-07-01T12:46:29.859Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hi" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hi</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-D-H秘钥交换协议" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/" class="article-date">
+  <time datetime="2020-07-01T12:41:53.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      D-H秘钥交换协议
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1.用rand库：</p>
+<pre><code>#include&lt;iostream&gt;
+#include&lt;time.h&gt;  
+#include&lt;stdlib.h&gt;  
+#include&lt;math.h&gt;
+#include&lt;cstdio&gt;
+using namespace std; 
+long long mulmod(long long a, long long b, long long mod)
+{
+    long long x=0,y=a%mod;
+    while(b&gt;0)
+    {
+        if(b%2==1)
+        {    
+            x=(x+y)%mod;
+        }
+        y=(y+y)%mod;
+        b=b/2;
+    }
+    return x%mod;
+}
+//base^e (mod p)
+long long mod1(long long base, long long exponent, long long mod)//base是随机产生，exponent是 p-1或者p-1/2，mod是p 
+{
+    long long x=1;
+    long long y=base;
+    while(exponent&gt;0)
+    {
+        if(exponent%2==1)
+            x=(x*y)%mod;
+        y=(y*y)%mod;
+        exponent=exponent/2;
+    }
+    return x%mod;
+}
+bool Miller(long long p)
+{//p是要判断的数 
+    if(p&lt;2)
+    {
+        return false;
+    }
+    if(p!=2&amp;&amp;p%2==0)
+    {
+        return false;//2的倍数 
+    }
+    long long s=p-1;
+    while(s%2==0)
+    {
+        s=s/2;
+    }
+    for(int i=0;i&lt;5;i++)//因为算法不是确定性，是概率性的，多运行几次，判断成功率高 
+    {
+        long long a=rand()%(p-1)+1,temp=s;//随机产生一个1到p-1之间的数
+        long long mod=mod1(a,temp,p);//a^s (mod p)
+        while(temp!=p-1&amp;&amp;mod!=1&amp;&amp;mod!=p-1)//二次探测 
+        {
+            mod=mulmod(mod,mod,p);
+            temp=2*temp;
+        }
+        if(mod!=p-1&amp;&amp;temp%2==0)
+        {
+            return false;//返回合数 
+        }
+    }
+    return true;
+}
+long long powm(long long base, long long a,long long md) 
+{
+    long long ans=1;
+    while (a!=0) 
+    {
+        if (a&amp;1)    
+            ans=ans*base%md;
+        base=base*base%md;
+        a &gt;&gt;= 1;
+    }
+    return ans;
+}
+
+int main()  
+{  
+    unsigned long p,a,XA,XB,YA,YB,KA,KB;
+    bool flag=true;
+    while(flag){
+    p=rand()%10000000000000+10000000000;
+    if(Miller(p))
+        {
+        cout&lt;&lt;&quot;素数P:&quot;&lt;&lt;p&lt;&lt;endl;
+        flag=false;
+        }
+    //else 
+        //cout&lt;&lt;p&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    }
+    a=p-1;//欧拉函数
+    flag=true;
+    while(flag){
+    XA=rand()%10000000000000+10000000000;
+    if(Miller(p)&amp;&amp;XA&lt;p)
+        {
+        cout&lt;&lt;&quot;A私钥:&quot;&lt;&lt;XA&lt;&lt;endl;
+        flag=false;
+        }
+    //else 
+        //cout&lt;&lt;XA&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    }
+    flag=true;
+    while(flag){
+    XB=rand()%10000000000000+10000000000;
+    if(Miller(p)&amp;&amp;XB&lt;p&amp;&amp;XA!=XB)
+        {
+        cout&lt;&lt;&quot;B私钥:&quot;&lt;&lt;XB&lt;&lt;endl;
+        flag=false;
+        }
+    //else 
+        //cout&lt;&lt;XB&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    }
+    long long g=rand()%(p-1)+1;
+         while(powm(g,a,p)!=1)
+         {
+             g=rand()%(p-1)+1;
+        }
+    cout&lt;&lt;&quot;其中一个原根&quot;&lt;&lt;g&lt;&lt;endl;
+    YA=mod1(g,XA,p);
+    YB=mod1(g,XB,p);
+    KA=mod1(YB,XA,p);
+    KB=mod1(YA,XB,p);
+    cout&lt;&lt;&quot;A公开密钥:&quot;&lt;&lt;YA&lt;&lt;endl;
+    cout&lt;&lt;&quot;B公开密钥:&quot;&lt;&lt;YB&lt;&lt;endl;
+    cout&lt;&lt;&quot;A生成的共享秘钥:&quot;&lt;&lt;KA&lt;&lt;endl;
+    cout&lt;&lt;&quot;B生成的共享秘钥:&quot;&lt;&lt;KB&lt;&lt;endl;
+    return 0;  
+}</code></pre><p>2.用gmp库（大数生成）:</p>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;gmp.h&gt;
+using namespace std;
+
+int main()
+{        
+  mpz_t a,p,XA,XB,YA,YB,KA,KB,n; 
+  mpz_init(a);
+  mpz_init(p);
+  mpz_init(XA);
+  mpz_init(XB);
+  mpz_init(YA);
+  mpz_init(YB);
+  mpz_init(KA);
+  mpz_init(KB);
+
+  clock_t time = clock();
+
+gmp_randstate_t grt;
+gmp_randinit_default(grt);
+gmp_randseed_ui(grt, time);
+
+mpz_urandomb(p,grt, 1024);
+mpz_nextprime(p,p);
+
+do{
+mpz_urandomb(XA, grt,1024);
+mpz_nextprime(XA,XA);
+}while(mpz_cmp(XA,p)&gt;=0);
+
+do{
+mpz_urandomb(XB, grt, 1024);
+  mpz_nextprime(XB,XB);
+}while(mpz_cmp(XB,p)&gt;=0);
+
+gmp_printf(&quot;%Zd\n&quot;, p);
+gmp_printf(&quot;%Zd\n&quot;, XA);
+gmp_printf(&quot;%Zd\n&quot;, XB);
+
+mpz_init_set(a,p-1);
+mpz_powm(YA,a,XA,p);
+gmp_printf(&quot;%s %ZX\n\n&quot;, &quot;YA&quot;,YA);
+mpz_powm(YB,a,XB,p);
+gmp_printf(&quot;%s %ZX\n\n&quot;, &quot;YB&quot;,YB);
+mpz_powm(KA,YB,XA,p);
+gmp_printf(&quot;%s %ZX\n\n&quot;, &quot;KA&quot;,KA);
+mpz_powm(KB,YA,XB,p);
+gmp_printf(&quot;%s %ZX\n\n&quot;, &quot;KB&quot;,KB);
+
+
+  mpz_clear(a);//　清空内存
+  mpz_clear(p);
+  mpz_clear(XA);
+  mpz_clear(XB);
+  mpz_clear(YA);
+  mpz_clear(YB);
+  mpz_clear(KA);
+  mpz_clear(KB);
+  mpz_clear(n);
+  return 0;  
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/" data-id="ckc3ctizn0000wkv3d1ee0nb5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          国密SM4算法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">素性检验之MillerRabbin(米勒-拉宾)</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/">国密SM4算法</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/">D-H秘钥交换协议</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/">素性检验之MillerRabbin(米勒-拉宾)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/">素性检验之Eratosthenes筛法(埃式筛法)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/">centos7上安装vpp</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -5,17 +5,17 @@
   
 
   
-  <title>数据结构之二叉树 | Hi</title>
+  <title>素性检验之MillerRabbin(米勒-拉宾) | Hi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="#include&lt;iostream&gt; #include&lt;stdio.h&gt; using namespace std; typedef struct tree { char data; tree *leftchild; tree *rightchild; }*BiTree,BiTNode; &#x2F;&#x2F;创建二叉树，以#号代表空  void CreatBiTree(BiTree &amp;amp">
+  <meta name="description" content="#include &lt;iostream&gt; #include &lt;cstring&gt; #include &lt;cstdlib&gt; using namespace std; long long mulmod(long long a, long long b, long long mod)&#x2F;&#x2F;求a*b%mod  {     long long x&#x3D;0,y&#x3D;a%mod;     w">
 <meta property="og:type" content="article">
-<meta property="og:title" content="数据结构之二叉树">
-<meta property="og:url" content="http://yoursite.com/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/index.html">
+<meta property="og:title" content="素性检验之MillerRabbin(米勒-拉宾)">
+<meta property="og:url" content="http://yoursite.com/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/index.html">
 <meta property="og:site_name" content="Hi">
-<meta property="og:description" content="#include&lt;iostream&gt; #include&lt;stdio.h&gt; using namespace std; typedef struct tree { char data; tree *leftchild; tree *rightchild; }*BiTree,BiTNode; &#x2F;&#x2F;创建二叉树，以#号代表空  void CreatBiTree(BiTree &amp;amp">
+<meta property="og:description" content="#include &lt;iostream&gt; #include &lt;cstring&gt; #include &lt;cstdlib&gt; using namespace std; long long mulmod(long long a, long long b, long long mod)&#x2F;&#x2F;求a*b%mod  {     long long x&#x3D;0,y&#x3D;a%mod;     w">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-07-01T12:27:35.000Z">
-<meta property="article:modified_time" content="2020-07-01T12:28:39.003Z">
+<meta property="article:published_time" content="2020-07-01T12:39:32.000Z">
+<meta property="article:modified_time" content="2020-07-01T12:40:48.452Z">
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   
@@ -66,10 +66,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-数据结构之二叉树" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-素性检验之MillerRabbin-米勒-拉宾" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/" class="article-date">
-  <time datetime="2020-07-01T12:27:35.000Z" itemprop="datePublished">2020-07-01</time>
+    <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/" class="article-date">
+  <time datetime="2020-07-01T12:39:32.000Z" itemprop="datePublished">2020-07-01</time>
 </a>
     
   </div>
@@ -80,7 +80,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      数据结构之二叉树
+      素性检验之MillerRabbin(米勒-拉宾)
     </h1>
   
 
@@ -88,148 +88,83 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <pre><code>#include&lt;iostream&gt;
-#include&lt;stdio.h&gt;
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
 using namespace std;
-typedef struct tree
+long long mulmod(long long a, long long b, long long mod)//求a*b%mod 
 {
-char data;
-tree *leftchild;
-tree *rightchild;
-}*BiTree,BiTNode;
-//创建二叉树，以#号代表空 
-void CreatBiTree(BiTree &amp;T)
-{
-char ch;
-cin&gt;&gt;ch;
-if(ch==&apos;#&apos;)
-    T=NULL;
-else
-{
-    T=new BiTNode;
-    T-&gt;data=ch;
-    CreatBiTree(T-&gt;leftchild);
-    CreatBiTree(T-&gt;rightchild);
-}
-}
-//先序 
-void DLR(BiTree &amp;T)
-{
-if(T)
-{
-    cout&lt;&lt;T-&gt;data;
-    DLR(T-&gt;leftchild);
-    DLR(T-&gt;rightchild);
-}
-}
-//中序 
-void LDR(BiTree &amp;T)
-{
-
-if(T)
-{
-    LDR(T-&gt;leftchild);
-    cout&lt;&lt;T-&gt;data;
-    LDR(T-&gt;rightchild);
-}
-}
-//后序 
-void LRD(BiTree &amp;T)
-{
-if(T)
-{
-    LRD(T-&gt;leftchild);
-
-    LRD(T-&gt;rightchild);
-    cout&lt;&lt;T-&gt;data;
-}
-}
-//层序
-void floor(BiTree &amp;T)  
-{
-BiTree t[100];
-int i=0,j=0;
-t[i++]=T;
-while (i&gt;j)
-{
-    if (t[j])
+    long long x=0,y=a%mod;
+    while(b&gt;0)
     {
-        cout&lt;&lt;t[j]-&gt;data;
-        t[i++]=t[j]-&gt;leftchild;
-        t[i++]=t[j]-&gt;rightchild;
+        if(b%2==1)
+        {    
+            x=(x+y)%mod;
+        }
+        y=(y+y)%mod;
+        b=b/2;
     }
-    j++;
+    return x%mod;
 }
-}
-
-//深度 
-int  Depth(BiTree &amp;T)
+//base^e (mod p)
+long long mod1(long long base, long long e, long long mod)//base是随机产生，e是n-1/2，mod是p 
 {
-if(!T)
-return 0;
-else
-{
-    int m,n;
-    m=Depth(T-&gt;leftchild);//左子树深度m 
-    n=Depth(T-&gt;rightchild);//右子树深度n 
-    if(m&gt;n)
-    return m+1;
-    else
-    return n+1;
-}
-}
-
-//结点
-int NodeCount(BiTree &amp;T)
-{
-if(!T)
-    return 0;
-    int n=NodeCount(T-&gt;leftchild)+NodeCount(T-&gt;rightchild)+1;
-    //左子树+右子树+根节点 
-return n;
-}
-//叶节点数 
-void yecount(BiTree &amp;T)
-{
-
-if(T)
-{
-    if(T-&gt;leftchild==NULL&amp;&amp;T-&gt;rightchild==NULL)
+    long long x=1;
+    long long y=base;
+    while(e&gt;0)
     {
-        i++;
+        if(e%2==1)//e为奇数 
+            x=(x*y)%mod;
+        y=(y*y)%mod;
+        e=e/2;
     }
-    else
+    return x%mod;
+}
+bool Miller(long long n)
+{
+    if (n==2)
+        return true;
+    if (n&lt;2||!(n&amp;1))
+        return false;
+    long long m=n-1,k=0;
+    while(!(m&amp;1))
     {
-        yecount(T-&gt;leftchild);
-        yecount(T-&gt;rightchild);
+        k++;
+        m&gt;&gt;=1;
     }
+    for(int i=1;i&lt;=20;i++)  // 20为Miller-Rabin测试的迭代次数
+    {
+        long long a=rand()%(n-1)+1;//随机生成1-n之间的数 
+        long long x=mod1(a,m,n);
+        long long y;
+        for (int j=1;j&lt;=k;j++)
+        {
+            y=mulmod(x,x,n);
+            if(y==1&amp;&amp;x!=1&amp;&amp;x!=n-1)
+                return false;
+            x=y;
+        }
+        if (y!=1)
+            return false;
+    }
+    return true;
 }
-}
-//主函数
+//Main
 int main()
 {
-BiTree T;
-cout&lt;&lt;&quot;请输入一颗二叉树&quot;&lt;&lt;endl;
-CreatBiTree(T);
-cout&lt;&lt;&quot;\n先序遍历是&quot;&lt;&lt;endl;
-DLR(T);
-
-cout&lt;&lt;&quot;\n中序遍历是&quot;&lt;&lt;endl; 
-LDR(T);
-cout&lt;&lt;&quot;\n后序遍历是&quot;&lt;&lt;endl; 
-LRD(T);
-cout&lt;&lt;&quot;\n层序遍历是&quot;&lt;&lt;endl;
-floor(T); 
-cout&lt;&lt;&quot;\n二叉树的深度是&quot;&lt;&lt;endl;
-cout&lt;&lt;Depth(T);
-cout&lt;&lt;&quot;\n二叉树的结点数是&quot;&lt;&lt;endl; 
-cout&lt;&lt;NodeCount(T);
-return 0;
+    long long n;
+    cout&lt;&lt;&quot;输入要判断的数:&quot;&lt;&lt;endl;
+    cin&gt;&gt;n;
+    if (Miller(n))
+        cout&lt;&lt;n&lt;&lt;&quot;是素数&quot;&lt;&lt;endl;
+    else
+        cout&lt;&lt;n&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    return 0;
 }</code></pre>
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/" data-id="ckc3cc67p000554v3eyoi2mc4" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/" data-id="ckc3ctj060002wkv3h0q07ta3" class="article-share-link">Share</a>
       
       
     </footer>
@@ -238,19 +173,19 @@ return 0;
     
 <nav id="article-nav">
   
-    <a href="/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
-          Python之turtle库
+          D-H秘钥交换协议
         
       </div>
     </a>
   
   
-    <a href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">数据结构1-2约瑟夫</div>
+      <div class="article-nav-title">素性检验之Eratosthenes筛法(埃式筛法)</div>
     </a>
   
 </nav>

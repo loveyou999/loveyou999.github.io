@@ -64,6 +64,452 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-国密SM4算法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/" class="article-date">
+  <time datetime="2020-07-01T12:42:16.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/">国密SM4算法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/" data-id="ckc3ctj050001wkv34rqr77xa" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-D-H秘钥交换协议" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/" class="article-date">
+  <time datetime="2020-07-01T12:41:53.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/">D-H秘钥交换协议</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1.用rand库：</p>
+<pre><code>#include&lt;iostream&gt;
+#include&lt;time.h&gt;  
+#include&lt;stdlib.h&gt;  
+#include&lt;math.h&gt;
+#include&lt;cstdio&gt;
+using namespace std; 
+long long mulmod(long long a, long long b, long long mod)
+{
+    long long x=0,y=a%mod;
+    while(b&gt;0)
+    {
+        if(b%2==1)
+        {    
+            x=(x+y)%mod;
+        }
+        y=(y+y)%mod;
+        b=b/2;
+    }
+    return x%mod;
+}
+//base^e (mod p)
+long long mod1(long long base, long long exponent, long long mod)//base是随机产生，exponent是 p-1或者p-1/2，mod是p 
+{
+    long long x=1;
+    long long y=base;
+    while(exponent&gt;0)
+    {
+        if(exponent%2==1)
+            x=(x*y)%mod;
+        y=(y*y)%mod;
+        exponent=exponent/2;
+    }
+    return x%mod;
+}
+bool Miller(long long p)
+{//p是要判断的数 
+    if(p&lt;2)
+    {
+        return false;
+    }
+    if(p!=2&amp;&amp;p%2==0)
+    {
+        return false;//2的倍数 
+    }
+    long long s=p-1;
+    while(s%2==0)
+    {
+        s=s/2;
+    }
+    for(int i=0;i&lt;5;i++)//因为算法不是确定性，是概率性的，多运行几次，判断成功率高 
+    {
+        long long a=rand()%(p-1)+1,temp=s;//随机产生一个1到p-1之间的数
+        long long mod=mod1(a,temp,p);//a^s (mod p)
+        while(temp!=p-1&amp;&amp;mod!=1&amp;&amp;mod!=p-1)//二次探测 
+        {
+            mod=mulmod(mod,mod,p);
+            temp=2*temp;
+        }
+        if(mod!=p-1&amp;&amp;temp%2==0)
+        {
+            return false;//返回合数 
+        }
+    }
+    return true;
+}
+long long powm(long long base, long long a,long long md) 
+{
+    long long ans=1;
+    while (a!=0) 
+    {
+        if (a&amp;1)    
+            ans=ans*base%md;
+        base=base*base%md;
+        a &gt;&gt;= 1;
+    }
+    return ans;
+}
+
+int main()  
+{  
+    unsigned long p,a,XA,XB,YA,YB,KA,KB;
+    bool flag=true;
+    while(flag){
+    p=rand()%10000000000000+10000000000;
+    if(Miller(p))
+        {
+        cout&lt;&lt;&quot;素数P:&quot;&lt;&lt;p&lt;&lt;endl;
+        flag=false;
+        }
+    //else 
+        //cout&lt;&lt;p&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    }
+    a=p-1;//欧拉函数
+    flag=true;
+    while(flag){
+    XA=rand()%10000000000000+10000000000;
+    if(Miller(p)&amp;&amp;XA&lt;p)
+        {
+        cout&lt;&lt;&quot;A私钥:&quot;&lt;&lt;XA&lt;&lt;endl;
+        flag=false;
+        }
+    //else 
+        //cout&lt;&lt;XA&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    }
+    flag=true;
+    while(flag){
+    XB=rand()%10000000000000+10000000000;
+    if(Miller(p)&amp;&amp;XB&lt;p&amp;&amp;XA!=XB)
+        {
+        cout&lt;&lt;&quot;B私钥:&quot;&lt;&lt;XB&lt;&lt;endl;
+        flag=false;
+        }
+    //else 
+        //cout&lt;&lt;XB&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    }
+    long long g=rand()%(p-1)+1;
+         while(powm(g,a,p)!=1)
+         {
+             g=rand()%(p-1)+1;
+        }
+    cout&lt;&lt;&quot;其中一个原根&quot;&lt;&lt;g&lt;&lt;endl;
+    YA=mod1(g,XA,p);
+    YB=mod1(g,XB,p);
+    KA=mod1(YB,XA,p);
+    KB=mod1(YA,XB,p);
+    cout&lt;&lt;&quot;A公开密钥:&quot;&lt;&lt;YA&lt;&lt;endl;
+    cout&lt;&lt;&quot;B公开密钥:&quot;&lt;&lt;YB&lt;&lt;endl;
+    cout&lt;&lt;&quot;A生成的共享秘钥:&quot;&lt;&lt;KA&lt;&lt;endl;
+    cout&lt;&lt;&quot;B生成的共享秘钥:&quot;&lt;&lt;KB&lt;&lt;endl;
+    return 0;  
+}</code></pre><p>2.用gmp库（大数生成）:</p>
+<pre><code>#include &lt;iostream&gt;
+#include &lt;gmp.h&gt;
+using namespace std;
+
+int main()
+{        
+  mpz_t a,p,XA,XB,YA,YB,KA,KB,n; 
+  mpz_init(a);
+  mpz_init(p);
+  mpz_init(XA);
+  mpz_init(XB);
+  mpz_init(YA);
+  mpz_init(YB);
+  mpz_init(KA);
+  mpz_init(KB);
+
+  clock_t time = clock();
+
+gmp_randstate_t grt;
+gmp_randinit_default(grt);
+gmp_randseed_ui(grt, time);
+
+mpz_urandomb(p,grt, 1024);
+mpz_nextprime(p,p);
+
+do{
+mpz_urandomb(XA, grt,1024);
+mpz_nextprime(XA,XA);
+}while(mpz_cmp(XA,p)&gt;=0);
+
+do{
+mpz_urandomb(XB, grt, 1024);
+  mpz_nextprime(XB,XB);
+}while(mpz_cmp(XB,p)&gt;=0);
+
+gmp_printf(&quot;%Zd\n&quot;, p);
+gmp_printf(&quot;%Zd\n&quot;, XA);
+gmp_printf(&quot;%Zd\n&quot;, XB);
+
+mpz_init_set(a,p-1);
+mpz_powm(YA,a,XA,p);
+gmp_printf(&quot;%s %ZX\n\n&quot;, &quot;YA&quot;,YA);
+mpz_powm(YB,a,XB,p);
+gmp_printf(&quot;%s %ZX\n\n&quot;, &quot;YB&quot;,YB);
+mpz_powm(KA,YB,XA,p);
+gmp_printf(&quot;%s %ZX\n\n&quot;, &quot;KA&quot;,KA);
+mpz_powm(KB,YA,XB,p);
+gmp_printf(&quot;%s %ZX\n\n&quot;, &quot;KB&quot;,KB);
+
+
+  mpz_clear(a);//　清空内存
+  mpz_clear(p);
+  mpz_clear(XA);
+  mpz_clear(XB);
+  mpz_clear(YA);
+  mpz_clear(YB);
+  mpz_clear(KA);
+  mpz_clear(KB);
+  mpz_clear(n);
+  return 0;  
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/" data-id="ckc3ctizn0000wkv3d1ee0nb5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-素性检验之MillerRabbin-米勒-拉宾" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/" class="article-date">
+  <time datetime="2020-07-01T12:39:32.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/">素性检验之MillerRabbin(米勒-拉宾)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdlib&gt;
+using namespace std;
+long long mulmod(long long a, long long b, long long mod)//求a*b%mod 
+{
+    long long x=0,y=a%mod;
+    while(b&gt;0)
+    {
+        if(b%2==1)
+        {    
+            x=(x+y)%mod;
+        }
+        y=(y+y)%mod;
+        b=b/2;
+    }
+    return x%mod;
+}
+//base^e (mod p)
+long long mod1(long long base, long long e, long long mod)//base是随机产生，e是n-1/2，mod是p 
+{
+    long long x=1;
+    long long y=base;
+    while(e&gt;0)
+    {
+        if(e%2==1)//e为奇数 
+            x=(x*y)%mod;
+        y=(y*y)%mod;
+        e=e/2;
+    }
+    return x%mod;
+}
+bool Miller(long long n)
+{
+    if (n==2)
+        return true;
+    if (n&lt;2||!(n&amp;1))
+        return false;
+    long long m=n-1,k=0;
+    while(!(m&amp;1))
+    {
+        k++;
+        m&gt;&gt;=1;
+    }
+    for(int i=1;i&lt;=20;i++)  // 20为Miller-Rabin测试的迭代次数
+    {
+        long long a=rand()%(n-1)+1;//随机生成1-n之间的数 
+        long long x=mod1(a,m,n);
+        long long y;
+        for (int j=1;j&lt;=k;j++)
+        {
+            y=mulmod(x,x,n);
+            if(y==1&amp;&amp;x!=1&amp;&amp;x!=n-1)
+                return false;
+            x=y;
+        }
+        if (y!=1)
+            return false;
+    }
+    return true;
+}
+//Main
+int main()
+{
+    long long n;
+    cout&lt;&lt;&quot;输入要判断的数:&quot;&lt;&lt;endl;
+    cin&gt;&gt;n;
+    if (Miller(n))
+        cout&lt;&lt;n&lt;&lt;&quot;是素数&quot;&lt;&lt;endl;
+    else
+        cout&lt;&lt;n&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    return 0;
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/" data-id="ckc3ctj060002wkv3h0q07ta3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-素性检验之Eratosthenes筛法-埃式筛法" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/" class="article-date">
+  <time datetime="2020-07-01T12:37:45.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/">素性检验之Eratosthenes筛法(埃式筛法)</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>#include &lt;stdio.h&gt;
+#include &lt;iostream&gt;
+using namespace std;
+int main() {
+    int n;
+    cin&gt;&gt;n;
+    int i = 0; // 表示整数和对应的下标
+    int j = 0; // 表示正在处理的j的倍数从2开始到j * k &lt; SIZE.
+    int flag[n] = {0}; // 下标表示整数内容,标识是否是质数.
+    flag[0] = flag[1] = 0; // 0和1不是质数.
+    for(i=2;i&lt;=n;++i )
+    { // 除了0和1其它默认全是质数.
+    flag[i] = 1;
+    }
+    // 处理数的倍数.
+    for(i=0;i&lt;=n;++i) 
+    {
+        if(1==flag[i]) 
+        {
+            for(j=2;i*j&lt;=n;++j) 
+            {
+                flag[i*j]=0;
+            }        
+        }
+    }
+    // 打印质数.
+    /*for(i=0;i&lt;=n;++i) 
+    {
+        if(1==flag[i]) 
+        {
+            cout&lt;&lt;i&lt;&lt;endl;
+        }
+    }*/
+    if(flag[n]==1)
+        cout&lt;&lt;&quot;是素数&quot;&lt;&lt;endl;
+    else
+        cout&lt;&lt;&quot;不是素数&quot;&lt;&lt;endl;
+    return 0;
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/" data-id="ckc3ctj070003wkv3dj8b9ic2" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-centos7上安装vpp" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/" class="article-date">
@@ -667,455 +1113,12 @@ return 0;
 
 
   
-    <article id="post-数据结构之约瑟夫" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/" class="article-date">
-  <time datetime="2020-07-01T12:24:56.000Z" itemprop="datePublished">2020-07-01</time>
-</a>
+
+
+  <nav id="page-nav">
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/">数据结构1-2约瑟夫</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>问题描述：约瑟夫（Joseph）问题的一种描述是：编号为1,2,…,n的n个人按顺时针方向围坐一圈，每人持有一个密码（正整数）。一开始任选一个正整数作为报数上限值m，从第一个人开始按顺时针方向自1开始顺序报数，报到m时停止报数。报m的人出列，将他的密码作为新的m值，从他在顺时针方向上的下一个人开始重新从1报数，如此下去，直至所有人全部出列为止。试设计一个程序求出出列顺序。</p>
-<p>[测试数据]<br>由学生任意指定。</p>
-<p>　　如：m的初值为20；n的值为7；密码：3，1，7，2，4，8，4；<br>（正确的输出结果应为6，1，4，7，2，3，5）。</p>
-<pre><code>#include&lt;stdio.h&gt;
-#include&lt;malloc.h&gt;
-//1.元素类型，结点类型和指针类型
-typedef struct LNode
-{
-
-int number,password;//num用来存储人的序号，pwd用来存储人的密码
-struct LNode next;
-}SLX;
-
-struct LNode head,p,*pt; //定义结点
-
-//2 、创建循环链表函数
-
-int CreatLinkListFunction(int n) //参数n传递人数，
-{
-
-int i;
-head=(struct LNode)malloc(sizeof(SLX)); //创建一个带头结点的链表
-p=head;
-for(i=1;i&lt;n;i++)
-{
-pt=(struct LNode*)malloc(sizeof(SLX));
-p-&gt;next=pt;
-p=pt;
-}
-p-&gt;next=head; //构成循环链表
-pt=head;
-return 0;
-}
-//3.创建输入密码函数
-int EnterPassword(int n) //参数n传递人数
-
-{
-int i,k;
-printf(“\n请输入密码: \n”);
-for( i=1;i&lt;=n;i++)
-{
-scanf(“%d”,&amp;k);
-pt-&gt;number=i; //num存储人的序号
-pt-&gt;password=k; //pwd存储人的密码
-pt=pt-&gt;next;
-}
-pt=p;//创建循环链表 此时P是头结点head 这个函数存入密码 之后再一次返回密码
-return 0;
-}
-//4、创建输出函数
-int OutListFunction(int m,int n)
-
-//参数m、n传递报数上限值和人数
-
-{
-int i,a;
-for(i=1;i&lt;=n;i++) //用一个for循环搜索循环链表
-{
-for(a=1;a&lt;m;a++) //删除结点
-{
-pt=pt-&gt;next;
-}
-p=pt-&gt;next;
-m=p-&gt;password;
-printf(“%d “,p-&gt;number); //输出人的序号
-pt-&gt;next=p-&gt;next;
-free(p); //释放动态申请的结点空间
-}
-return 0;
-}
-//主函数
-int main()
-{
-
-int m,n;//m为报数上限值，n为人数
-printf(“\n参数m、n传递报数上限值和人数;\n”);
-printf(“\n请输入 m 和n: \n”);
-scanf(“%d %d”,&amp;m,&amp;n);
-CreatLinkListFunction(n); //调用创建链表函数
-EnterPassword(n); //调用输入密码函数
-printf(“\n出队的人依次是:\n”);
-OutListFunction( m,n); //调用输出链表函数
-return 0;
-}</code></pre>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/" data-id="ckc3cc67q000654v3aqt8d6bj" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-数据结构之单链表" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/06/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%8D%95%E9%93%BE%E8%A1%A8/" class="article-date">
-  <time datetime="2020-06-29T11:45:26.000Z" itemprop="datePublished">2020-06-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/06/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%8D%95%E9%93%BE%E8%A1%A8/">数据结构实验1-1</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>单链表基本操作</p>
-<pre><code>#include&lt;stdio.h&gt;
-#include&lt;stdlib.h&gt;
-#include&lt;iostream&gt;
-using namespace std;
-
-//定义单链表结点结构体
-
-typedef int ElemType;
-
-typedef struct Node
-{
-
-ElemType data;
-
-struct Node *next;
-
-}LNode,*LinkList;
-
-//建立一个带头结点的单链表
-
-void Build(LinkList L)
-{
-
-int n; 
-LinkList p,q;
-
-p=L;
-
-printf(&quot;输入n和n个数字：\n&quot;);
-
-scanf(&quot;%d&quot;,&amp;n);
-
-while(n--)
-{
-
-    q=(LinkList)malloc(sizeof(LNode));
-
-    scanf(&quot;%d&quot;,&amp;q-&gt;data);
-
-    q-&gt;next=NULL;
-
-    p-&gt;next=q;
-
-    p=q;
-}}
-
-//求单链表的长度
-
-void LinkLength(LinkList L)
-
-{
-
-int num = 0;
-
-LinkList p;
-
-p=L-&gt;next;
-
-while(p)
-{
-
-    num++;
-
-    printf(&quot;%3d&quot;,p-&gt;data);
-
-    p=p-&gt;next;
-
-}
-printf(&quot;长度为：%d\n&quot;,num);}
-
-//查找值为x的元素值q
-
-void Find(LinkList L,int x)
-{
-
-LinkList p;
-
-p=L;
-
-int i,b=1,a;
-
-while(p-&gt;next &amp;&amp;p-&gt;next-&gt;data!=x)
-
-    {
-    p=p-&gt;next;
-
-    b++;
-    }
-
-if(p-&gt;next)
-    {
-
-    printf(&quot;%d的p位置为：%d\n\n&quot;,x,b);
-
-    printf(&quot;是否需要修改值 1或0\n&quot;);
-
-    cin&gt;&gt;a;
-
-    if(a==1)
-    {
-
-    printf(&quot;修改的值为\n&quot;); 
-
-    cin&gt;&gt;i;
-
-    p-&gt;next-&gt;data=i;
-
-    printf(&quot;修改成功\n\n&quot;);
-
-    }
-else
-
-    printf(&quot;取消修改!!\n\n&quot;);
-
-    }
-else
-
-printf(&quot;没找到!!\n\n&quot;);} 
-
-//插入值为x的结点
-
-void ListInsert(LinkList L,int x)
-{
-LinkList p,q;
-
-p=L;
-
-int b;//插入的位置 
-
-while(p-&gt;next&amp;&amp;p-&gt;next-&gt;data==x)
-
-    p=p-&gt;next;
-
-if(p-&gt;next)
-{
-
-    printf(&quot;请输入要插入的位置\n&quot;);
-
-    cin&gt;&gt;b;
-
-    for(int i=0;i&lt;b-1;i++)
-    {
-
-        p=p-&gt;next;
-
-    }
-    q=new LNode;
-
-    q-&gt;data=x;
-
-    q-&gt;next=p-&gt;next;
-
-    p-&gt;next=q;
-
-    printf(&quot;插入成功!!\n\n&quot;,x);}}
-
-//删除值为x的结点
-
-void Delete(LinkList L,int x)
-{
-
-LinkList p,q;
-
-p=L;
-
-int b=0;//删除的位置 
-
-while(p-&gt;next &amp;&amp;b&lt;x-1)
-{
-
-        p=p-&gt;next;
-
-        ++b;
-}
-
-if(p-&gt;next)
-{ 
-
-    q=p-&gt;next;
-
-    p-&gt;next=q-&gt;next;
-
-    free(q);
-
-    printf(&quot;删除成功!!\n\n&quot;,x);}}
-
-void Tips()
-{
-
-printf(&quot;\n&quot;);
-
-printf(&quot;根据按键选择相应的操作：\n&quot;);
-
-printf(&quot;&lt;1&gt;输出单链表的数据元素:\n&quot;);
-
-printf(&quot;&lt;2&gt;查找修改元素:\n&quot;);
-
-printf(&quot;&lt;3&gt;插入结点:\n&quot;);
-
-printf(&quot;&lt;4&gt;删除结点:\n&quot;);
-
-printf(&quot;&lt;0&gt;退出:\n&quot;);
-
-}
-主函数
-
-int main()
-{
-
-int op,x;
-LinkList L;
-L = (LinkList)malloc(sizeof(LNode));
-L-&gt;next=NULL;
-L-&gt;data=-1;
-Build(L);
-Tips();
-scanf(&quot;%d&quot;,&amp;op);
-while(op)
-{
-    switch(op)
-    {
-    case 1:LinkLength(L);
-        break;
-    case 2:
-        printf(&quot;查找和修改:\n&quot;);
-        scanf(&quot;%d&quot;,&amp;x);
-        Find(L,x);
-        break;
-    case 3:
-        printf(&quot;插入的值:\n&quot;);
-        scanf(&quot;%d&quot;,&amp;x);
-        ListInsert(L,x);
-        break;
-    case 4:
-        printf(&quot;删除位置:\n&quot;);
-        scanf(&quot;%d&quot;,&amp;x);
-        Delete(L,x);
-        break;
-    }
-        scanf(&quot;%d&quot;,&amp;op);
-}
-return 0;
-
-}</code></pre>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%8D%95%E9%93%BE%E8%A1%A8/" data-id="ckc3cc67y000754v31vl5eshm" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/06/10/hello-world/" class="article-date">
-  <time datetime="2020-06-10T14:43:40.001Z" itemprop="datePublished">2020-06-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/06/10/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/06/10/hello-world/" data-id="ckbawf85v0000xov35tj6aut9" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+  </nav>
 
 </section>
         
@@ -1146,23 +1149,23 @@ return 0;
       <ul>
         
           <li>
+            <a href="/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/">国密SM4算法</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/">D-H秘钥交换协议</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BMillerRabbin-%E7%B1%B3%E5%8B%92-%E6%8B%89%E5%AE%BE/">素性检验之MillerRabbin(米勒-拉宾)</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/%E7%B4%A0%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B9%8BEratosthenes%E7%AD%9B%E6%B3%95-%E5%9F%83%E5%BC%8F%E7%AD%9B%E6%B3%95/">素性检验之Eratosthenes筛法(埃式筛法)</a>
+          </li>
+        
+          <li>
             <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/">centos7上安装vpp</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/">Python列表和元组</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/">图的遍历</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/01/Python%E4%B9%8B%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B/">Python之数字类型</a>
-          </li>
-        
-          <li>
-            <a href="/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/">Python之turtle库</a>
           </li>
         
       </ul>
