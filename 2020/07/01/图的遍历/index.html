@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>图的遍历 | Hi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="#include&lt;stdio.h&gt; #include&lt;stdlib.h&gt; #include&lt;iostream&gt; #include&lt;queue&gt; using namespace std; #define MVNum 100 #define VerTexType char typedef struct ArcNode {     int adjvex;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图的遍历">
+<meta property="og:url" content="http://yoursite.com/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/index.html">
+<meta property="og:site_name" content="Hi">
+<meta property="og:description" content="#include&lt;stdio.h&gt; #include&lt;stdlib.h&gt; #include&lt;iostream&gt; #include&lt;queue&gt; using namespace std; #define MVNum 100 #define VerTexType char typedef struct ArcNode {     int adjvex;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-01T12:30:27.000Z">
+<meta property="article:modified_time" content="2020-07-01T12:31:03.227Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hi" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hi</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-图的遍历" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/" class="article-date">
+  <time datetime="2020-07-01T12:30:27.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      图的遍历
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;iostream&gt;
+#include&lt;queue&gt;
+using namespace std;
+#define MVNum 100
+#define VerTexType char
+typedef struct ArcNode
+{
+    int adjvex;
+    struct ArcNode * nextarc;
+}ArcNode;
+typedef struct VNode
+{
+    VerTexType data;
+    ArcNode *firstarc;
+}VNode,AdjList[MVNum];
+typedef struct
+{
+    AdjList vertices;
+    int vexnum,arcnum;
+}ALGraph;
+int LocateVex(ALGraph G,VerTexType x)
+{
+    for(int i=0;i&lt;G.vexnum;i++)
+    {
+        if(x==G.vertices[i].data)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+void CreateUDG(ALGraph &amp;G)
+{
+    cout&lt;&lt;&quot;输入顶点数和边数&quot;&lt;&lt;endl;
+    cin&gt;&gt;G.vexnum&gt;&gt;G.arcnum;//总顶点数，总边数
+    cout&lt;&lt;&quot;输入顶点信息&quot;&lt;&lt;endl;
+    for(int i=0;i&lt;G.vexnum;i++)
+    {
+        cin&gt;&gt;G.vertices[i].data;
+        G.vertices[i].firstarc=NULL;
+    }
+    char v1,v2;//边上的两点
+    cout&lt;&lt;&quot;输入边的两端&quot;&lt;&lt;endl;
+    for(int k=0;k&lt;G.arcnum;k++)
+    {
+        int i,j;
+        cin&gt;&gt;v1&gt;&gt;v2;
+        i=LocateVex(G,v1);
+        j=LocateVex(G,v2);
+        ArcNode *p1=new ArcNode;
+        p1-&gt;adjvex=j;
+        p1-&gt;nextarc=G.vertices[i].firstarc;
+        G.vertices[i].firstarc=p1;
+        ArcNode *p2=new ArcNode;
+        p2-&gt;adjvex=i;
+        p2-&gt;nextarc=G.vertices[j].firstarc;
+        G.vertices[j].firstarc=p2;
+    }
+}
+bool visited[MVNum];
+int FirstAdjVex(ALGraph G,int v)
+{
+    ArcNode* p=G.vertices[v].firstarc;
+    if(p)
+        return p-&gt;adjvex;
+    else
+        return -1;
+}
+int NextAdjVex(ALGraph G,int v,int w)
+{
+    ArcNode* p=G.vertices[v].firstarc;
+    while(p)
+    {
+        if(p-&gt;adjvex==w)
+        break;
+        p=p-&gt;nextarc;
+    }
+    if(p-&gt;adjvex!=w||!p-&gt;nextarc)
+    return -1;
+    else
+    return p-&gt;nextarc-&gt;adjvex;
+}
+void DFS(ALGraph G,int v)
+{
+    int w;
+    visited[v]=true;
+    cout&lt;&lt;G.vertices[v].data;
+    ArcNode* p=G.vertices[v].firstarc;
+    while(p!=NULL)
+    {
+        w=p-&gt;adjvex;
+        if(!visited[w])
+        DFS(G,w);
+        p=p-&gt;nextarc;
+    }
+}
+    void DFSTraverse(ALGraph G)
+{
+cout&lt;&lt;&quot;深度优先搜索：&quot;&lt;&lt;endl;
+for(int i=0;i&lt;G.vexnum;i++)
+visited[i]=false;
+for(int i=0;i&lt;G.vexnum;i++)
+if(!visited[i])
+DFS(G,i);
+}
+
+void BFS(ALGraph G)
+{
+queue&lt;int&gt; q;
+for(int i=0;i&lt;G.vexnum;i++)
+    visited[i]=false;
+cout&lt;&lt;&quot;广度优先遍历&quot;&lt;&lt;endl;
+for(int i=0;i&lt;G.vexnum;i++)
+{
+    if(!visited[i])
+    {
+        q.push(i);
+        visited[i]=true;
+        while(!q.empty())
+        {
+            int v=q.front();
+            q.pop();
+            cout&lt;&lt;G.vertices[v].data;
+            for(int w=FirstAdjVex(G,v);w&gt;=0;w=NextAdjVex(G,v,w))
+            {
+                if(!visited[w])
+                {
+                    q.push(w);
+                    visited[w]=true;
+                }
+            }
+        }
+    }
+}
+}
+int main()
+{
+ALGraph G;
+CreateUDG(G);
+DFSTraverse(G);
+cout&lt;&lt;endl;
+BFS(G);
+return 0;
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/" data-id="ckc3cc67o000454v36mik6uxj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Python列表和元组
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/07/01/Python%E4%B9%8B%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Python之数字类型</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/">centos7上安装vpp</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/">Python列表和元组</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/">图的遍历</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E4%B9%8B%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B/">Python之数字类型</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/">Python之turtle库</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

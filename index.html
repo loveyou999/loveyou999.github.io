@@ -64,6 +64,1008 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-centos7上安装vpp" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/" class="article-date">
+  <time datetime="2020-07-01T12:32:37.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/">centos7上安装vpp</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在VMware虚拟机里面的linux操作系统下centos7上的安装以及我遇到的一些错误</p>
+<p>首先需要有centos7系统，可在官网下载，在安装完这些之后，开始安装vpp</p>
+<p>我使用的是yum安装，首先遇到的问题没有联网（测试是否有网络可用ping <a href="http://www.baidu.com，也可以用浏览器搜网址查看是否有网络），可在编辑--虚拟网络编辑器里修改，我用的桥接模式-直接连接物理网络，可以自己来回换看看哪种模式下会有网络。重启网络可用命令service" target="_blank" rel="noopener">www.baidu.com，也可以用浏览器搜网址查看是否有网络），可在编辑--虚拟网络编辑器里修改，我用的桥接模式-直接连接物理网络，可以自己来回换看看哪种模式下会有网络。重启网络可用命令service</a> network restart，也可以关机重启。</p>
+<p>1.添加yum源文件</p>
+<p>[root@localhost ~]# touch /etc/yum.repos.d/vpp.repo<br>[root@localhost ~]# vi /etc/yum.repos.d/vpp.repo</p>
+<p>将下面内容插入到文件中并保存：</p>
+<p>[fdio-stable-1801]<br>name=fd.io stable/1801 branch latest merge<br>baseurl=<a href="https://nexus.fd.io/content/repositories/fd.io.centos7/" target="_blank" rel="noopener">https://nexus.fd.io/content/repositories/fd.io.centos7/</a><br>enabled=1<br>gpgcheck=0</p>
+<p>我遇到文件只可读不可编辑，可用命令sudo chmod 666 +要修改的文件路径//666表示可读可改，222表示只可读</p>
+<p>2.更新源缓存</p>
+<p>[root@localhost ~]# yum clean all<br>[root@localhost ~]# yum makecache<br>[root@localhost ~]# yum install -y epel-release python-pip</p>
+<p>3.安装vpp</p>
+<p>[root@localhost ~]# yum install vpp -y</p>
+<p>不联网是不能下载的，首先需要保证有网络连接</p>
+<p>4.可选安装</p>
+<p>[root@localhost ~]# yum install -y vpp-plugins</p>
+<p>5.启动vpp</p>
+<p>[root@localhost ~]# systemctl enable vpp<br>[root@localhost ~]# systemctl start vpp<br>[root@localhost ~]# systemctl status vpp.service</p>
+<p>6.至此没出问题应该是完成了安装，测试是否安装成功：</p>
+<p>[root@localhost ~]# sudo vppctl</p>
+<p>启动两个vpp，然后需要配置文件，文件可设置在任意目录下，我设置在了根目录下</p>
+<p>文件名为startup1.conf</p>
+<p>内容如下</p>
+<p>unix {cli-listen /run/vpp/cli-vpp1.sock}<br>api-segment { prefix vpp1 }<br>plugins { plugin dpdk_plugin.so { disable } }</p>
+<p>文件名为startup2.conf</p>
+<p>内容如下</p>
+<p>unix {cli-listen /run/vpp/cli-vpp2.sock}<br>api-segment { prefix vpp2 }<br>plugins { plugin dpdk_plugin.so { disable } }</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/" data-id="ckc3cc67n000354v3btew686p" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Python列表和元组" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/" class="article-date">
+  <time datetime="2020-07-01T12:31:36.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/">Python列表和元组</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>为了监督饮食质量，食堂向学生发起了一个简单的问卷调查。最后回收的问卷结果形成一个字符串：”满意，一般，不满意，一般，一般，非常满意，满意，不满意，非常满意，满意，不满意，满意，不满意，非常满意“。请编写程序，利用列表统计每个评语出现次数，并找出次数最多的那个评语。</p>
+<pre><code>comment=[&quot;非常满意&quot;,&quot;满意&quot;,&quot;一般&quot;,&quot;不满意&quot;]
+s=&quot;满意，一般，不满意，一般，一般，非常满意，满意，不满意，非常满意，满意，不满意，满意，不满意，非常满意&quot;
+lst=list(s.split(&quot; &quot;))
+score=[0,0,0,0]
+for a in lst:
+if a==&quot;非常满意&quot;:
+    score[0]+=1
+elif a==&quot;满意&quot;:
+    score[1]+=1
+elif a==&quot;一般&quot;:
+    score[2]+=1
+else a==&quot;不满意&quot;:
+    score[3]+=1
+print(&quot;非常满意出现的次数：{}&quot;.format(score[0]))
+print(&quot;满意出现的次数是{}&quot;.format(scoer[1]))
+print(&quot;一般出现的次数是{}&quot;.format(score[2]))
+print(&quot;不满意出现次数{}&quot;.format(score[3]))
+print(&quot;最多的是&quot;,comment[score.index(max(score))])</code></pre><p>其中[]表示序列，split()函数是把字符串分隔，format()函数的用法，例如”{1} {0} {1}”.format(“hello”, “world”) 输出结果为“’world hello world”。</p>
+<p>（split用法）输入一句英文，求其中最长的单词长度。</p>
+<pre><code>s=input()
+list=[]
+for i in s.split():
+    list+=str(len(i))
+print(max(list))</code></pre><p>创建长度为20的列表，其元素为1000~5000以内的随机整数。编写程序找出不能被10以内素数整除的元素。</p>
+<pre><code>import random
+lst=[random.randit(1000,5001) for i in range(20)]
+for i in range(20):
+if lst[i]%2!=0 and lst[i]%3!=0 and lst[i]%5!=0 and lst[i]%7!=0:
+    print(lst[i])</code></pre><p>列表访问课通过lst[i]的形式访问，下标从0开始。and表示并，相当于&amp;。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/" data-id="ckc3cc67l000154v3hakr9b3h" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-图的遍历" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/" class="article-date">
+  <time datetime="2020-07-01T12:30:27.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/">图的遍历</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;iostream&gt;
+#include&lt;queue&gt;
+using namespace std;
+#define MVNum 100
+#define VerTexType char
+typedef struct ArcNode
+{
+    int adjvex;
+    struct ArcNode * nextarc;
+}ArcNode;
+typedef struct VNode
+{
+    VerTexType data;
+    ArcNode *firstarc;
+}VNode,AdjList[MVNum];
+typedef struct
+{
+    AdjList vertices;
+    int vexnum,arcnum;
+}ALGraph;
+int LocateVex(ALGraph G,VerTexType x)
+{
+    for(int i=0;i&lt;G.vexnum;i++)
+    {
+        if(x==G.vertices[i].data)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+void CreateUDG(ALGraph &amp;G)
+{
+    cout&lt;&lt;&quot;输入顶点数和边数&quot;&lt;&lt;endl;
+    cin&gt;&gt;G.vexnum&gt;&gt;G.arcnum;//总顶点数，总边数
+    cout&lt;&lt;&quot;输入顶点信息&quot;&lt;&lt;endl;
+    for(int i=0;i&lt;G.vexnum;i++)
+    {
+        cin&gt;&gt;G.vertices[i].data;
+        G.vertices[i].firstarc=NULL;
+    }
+    char v1,v2;//边上的两点
+    cout&lt;&lt;&quot;输入边的两端&quot;&lt;&lt;endl;
+    for(int k=0;k&lt;G.arcnum;k++)
+    {
+        int i,j;
+        cin&gt;&gt;v1&gt;&gt;v2;
+        i=LocateVex(G,v1);
+        j=LocateVex(G,v2);
+        ArcNode *p1=new ArcNode;
+        p1-&gt;adjvex=j;
+        p1-&gt;nextarc=G.vertices[i].firstarc;
+        G.vertices[i].firstarc=p1;
+        ArcNode *p2=new ArcNode;
+        p2-&gt;adjvex=i;
+        p2-&gt;nextarc=G.vertices[j].firstarc;
+        G.vertices[j].firstarc=p2;
+    }
+}
+bool visited[MVNum];
+int FirstAdjVex(ALGraph G,int v)
+{
+    ArcNode* p=G.vertices[v].firstarc;
+    if(p)
+        return p-&gt;adjvex;
+    else
+        return -1;
+}
+int NextAdjVex(ALGraph G,int v,int w)
+{
+    ArcNode* p=G.vertices[v].firstarc;
+    while(p)
+    {
+        if(p-&gt;adjvex==w)
+        break;
+        p=p-&gt;nextarc;
+    }
+    if(p-&gt;adjvex!=w||!p-&gt;nextarc)
+    return -1;
+    else
+    return p-&gt;nextarc-&gt;adjvex;
+}
+void DFS(ALGraph G,int v)
+{
+    int w;
+    visited[v]=true;
+    cout&lt;&lt;G.vertices[v].data;
+    ArcNode* p=G.vertices[v].firstarc;
+    while(p!=NULL)
+    {
+        w=p-&gt;adjvex;
+        if(!visited[w])
+        DFS(G,w);
+        p=p-&gt;nextarc;
+    }
+}
+    void DFSTraverse(ALGraph G)
+{
+cout&lt;&lt;&quot;深度优先搜索：&quot;&lt;&lt;endl;
+for(int i=0;i&lt;G.vexnum;i++)
+visited[i]=false;
+for(int i=0;i&lt;G.vexnum;i++)
+if(!visited[i])
+DFS(G,i);
+}
+
+void BFS(ALGraph G)
+{
+queue&lt;int&gt; q;
+for(int i=0;i&lt;G.vexnum;i++)
+    visited[i]=false;
+cout&lt;&lt;&quot;广度优先遍历&quot;&lt;&lt;endl;
+for(int i=0;i&lt;G.vexnum;i++)
+{
+    if(!visited[i])
+    {
+        q.push(i);
+        visited[i]=true;
+        while(!q.empty())
+        {
+            int v=q.front();
+            q.pop();
+            cout&lt;&lt;G.vertices[v].data;
+            for(int w=FirstAdjVex(G,v);w&gt;=0;w=NextAdjVex(G,v,w))
+            {
+                if(!visited[w])
+                {
+                    q.push(w);
+                    visited[w]=true;
+                }
+            }
+        }
+    }
+}
+}
+int main()
+{
+ALGraph G;
+CreateUDG(G);
+DFSTraverse(G);
+cout&lt;&lt;endl;
+BFS(G);
+return 0;
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/" data-id="ckc3cc67o000454v36mik6uxj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Python之数字类型" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/Python%E4%B9%8B%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B/" class="article-date">
+  <time datetime="2020-07-01T12:29:55.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/Python%E4%B9%8B%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B/">Python之数字类型</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>1.整数类型：<br>pow（a，b）表示a的y次方，可正可负</p>
+<p>四种进制表示形式：</p>
+<p>一般用十进制：999,111，-231</p>
+<p>二进制，以0b或0B开头：0b010，-0B101</p>
+<p>八进制，以0o或0O开头： 0o123,0O456</p>
+<p>十六进制，以0x或0X开头：0x9a，-0O89</p>
+<p>2.浮点数类型：</p>
+<p>（1）存在不确定尾数，不是bug，用53位二进制表示的小数部分，约10的-16次方</p>
+<p>（2）round（x，d）函数：对x四舍五入，d则是小数的截取位数。</p>
+<p>3.复数类型：<br>Python中可以计算复数类型，不得不说是真的好。<br>例a+bj</p>
+<p>4.数值运算操作符：</p>
+<p>（1）‘+-*/’分别是加减乘除，/除法有小数，与c语言不同，例如10/3结果是3.333</p>
+<p>（2）‘//’是x与y之整数商 例如10//3结果是3<br>x%y是余数运算。</p>
+<p>（3）x**y</p>
+<p>1）当y为整数时，x的y次方<br>2）当y为小数时，则是开方运算，10**0.5是根号10</p>
+<p>5.二元操作符<br>x=x op y<br>例如x+=y等价于x=x+y；</p>
+<p>6.其他<br>abs（x）是绝对值</p>
+<p>divmod（x，y）求商余，输出结果是（x//y,x%y）即（商，余数）</p>
+<p>pow（x，y[,z]）是指（x**y）%z，[..]表示参数z可省略</p>
+<p>round（x，d）函数：对x四舍五入，d则是小数的截取位数。</p>
+<p>max（a，b，c，d）返回最大值<br>min则是返回最小值</p>
+<p>int（x）将x变成整数类型</p>
+<p>float（x）将x变为浮点数类型</p>
+<p>complex（x）将x变成复数形式</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/Python%E4%B9%8B%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B/" data-id="ckc3cc678000054v33as55hj3" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Python之turtle库" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/" class="article-date">
+  <time datetime="2020-07-01T12:29:15.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/">Python之turtle库</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>用import引入库<br>turtle（绘图）库的使用</p>
+<pre><code>import turtle
+turtle.setup(650,350,200,200)
+turtle.penup()
+turtle.fd(-250)
+turtle.pendown()
+turtle.pensize(25)
+turtle.pencolor(&quot;magenta&quot;)
+turtle.seth(-40)
+for i in range(4):
+    turtle.circle(40,80)
+    turtle.circle(-40,80)
+turtle.circle(40,80/2)
+turtle.fd(40)
+turtle.circle(16,100)
+turtle.fd(40 * 2/3)
+turtle.done()</code></pre><p>from &lt;库名&gt; import &lt;函数名&gt;或者*；</p>
+<p>也可以import&lt;库名&gt;和as&lt;库别名&gt;,就可以a.b使用；</p>
+<p>以上代码中setup（a,b,c,d）<br>a、b为宽度和高度,c和d为起始位置坐标，相对于左上角而言。goto（a,b）去这个位置;</p>
+<p>penup()抬起笔，pendown()放下笔;</p>
+<p>pensize(25)画笔的尺寸大小;</p>
+<p>pencolor(“magenta”)画笔的颜色;</p>
+<p>fd像正前方向运动，bk是反方向运动，circle（r,angle）是以左侧某一点，r为半径 ，angle为角度进行曲线运动;</p>
+<p>seth(-40)改变行进方向，绝对角度;<br>for i in range（N）<br>循环N次<br>range（M,N）<br>产生M到N-1个整数序列，共N-M个</p>
+<p>turtle.done()不关闭窗口，需要自己关闭。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/" data-id="ckc3cc67n000254v33r05gw0k" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-数据结构之二叉树" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/" class="article-date">
+  <time datetime="2020-07-01T12:27:35.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/">数据结构之二叉树</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <pre><code>#include&lt;iostream&gt;
+#include&lt;stdio.h&gt;
+using namespace std;
+typedef struct tree
+{
+char data;
+tree *leftchild;
+tree *rightchild;
+}*BiTree,BiTNode;
+//创建二叉树，以#号代表空 
+void CreatBiTree(BiTree &amp;T)
+{
+char ch;
+cin&gt;&gt;ch;
+if(ch==&apos;#&apos;)
+    T=NULL;
+else
+{
+    T=new BiTNode;
+    T-&gt;data=ch;
+    CreatBiTree(T-&gt;leftchild);
+    CreatBiTree(T-&gt;rightchild);
+}
+}
+//先序 
+void DLR(BiTree &amp;T)
+{
+if(T)
+{
+    cout&lt;&lt;T-&gt;data;
+    DLR(T-&gt;leftchild);
+    DLR(T-&gt;rightchild);
+}
+}
+//中序 
+void LDR(BiTree &amp;T)
+{
+
+if(T)
+{
+    LDR(T-&gt;leftchild);
+    cout&lt;&lt;T-&gt;data;
+    LDR(T-&gt;rightchild);
+}
+}
+//后序 
+void LRD(BiTree &amp;T)
+{
+if(T)
+{
+    LRD(T-&gt;leftchild);
+
+    LRD(T-&gt;rightchild);
+    cout&lt;&lt;T-&gt;data;
+}
+}
+//层序
+void floor(BiTree &amp;T)  
+{
+BiTree t[100];
+int i=0,j=0;
+t[i++]=T;
+while (i&gt;j)
+{
+    if (t[j])
+    {
+        cout&lt;&lt;t[j]-&gt;data;
+        t[i++]=t[j]-&gt;leftchild;
+        t[i++]=t[j]-&gt;rightchild;
+    }
+    j++;
+}
+}
+
+//深度 
+int  Depth(BiTree &amp;T)
+{
+if(!T)
+return 0;
+else
+{
+    int m,n;
+    m=Depth(T-&gt;leftchild);//左子树深度m 
+    n=Depth(T-&gt;rightchild);//右子树深度n 
+    if(m&gt;n)
+    return m+1;
+    else
+    return n+1;
+}
+}
+
+//结点
+int NodeCount(BiTree &amp;T)
+{
+if(!T)
+    return 0;
+    int n=NodeCount(T-&gt;leftchild)+NodeCount(T-&gt;rightchild)+1;
+    //左子树+右子树+根节点 
+return n;
+}
+//叶节点数 
+void yecount(BiTree &amp;T)
+{
+
+if(T)
+{
+    if(T-&gt;leftchild==NULL&amp;&amp;T-&gt;rightchild==NULL)
+    {
+        i++;
+    }
+    else
+    {
+        yecount(T-&gt;leftchild);
+        yecount(T-&gt;rightchild);
+    }
+}
+}
+//主函数
+int main()
+{
+BiTree T;
+cout&lt;&lt;&quot;请输入一颗二叉树&quot;&lt;&lt;endl;
+CreatBiTree(T);
+cout&lt;&lt;&quot;\n先序遍历是&quot;&lt;&lt;endl;
+DLR(T);
+
+cout&lt;&lt;&quot;\n中序遍历是&quot;&lt;&lt;endl; 
+LDR(T);
+cout&lt;&lt;&quot;\n后序遍历是&quot;&lt;&lt;endl; 
+LRD(T);
+cout&lt;&lt;&quot;\n层序遍历是&quot;&lt;&lt;endl;
+floor(T); 
+cout&lt;&lt;&quot;\n二叉树的深度是&quot;&lt;&lt;endl;
+cout&lt;&lt;Depth(T);
+cout&lt;&lt;&quot;\n二叉树的结点数是&quot;&lt;&lt;endl; 
+cout&lt;&lt;NodeCount(T);
+return 0;
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E4%BA%8C%E5%8F%89%E6%A0%91/" data-id="ckc3cc67p000554v3eyoi2mc4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-数据结构之约瑟夫" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/" class="article-date">
+  <time datetime="2020-07-01T12:24:56.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/">数据结构1-2约瑟夫</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>问题描述：约瑟夫（Joseph）问题的一种描述是：编号为1,2,…,n的n个人按顺时针方向围坐一圈，每人持有一个密码（正整数）。一开始任选一个正整数作为报数上限值m，从第一个人开始按顺时针方向自1开始顺序报数，报到m时停止报数。报m的人出列，将他的密码作为新的m值，从他在顺时针方向上的下一个人开始重新从1报数，如此下去，直至所有人全部出列为止。试设计一个程序求出出列顺序。</p>
+<p>[测试数据]<br>由学生任意指定。</p>
+<p>　　如：m的初值为20；n的值为7；密码：3，1，7，2，4，8，4；<br>（正确的输出结果应为6，1，4，7，2，3，5）。</p>
+<pre><code>#include&lt;stdio.h&gt;
+#include&lt;malloc.h&gt;
+//1.元素类型，结点类型和指针类型
+typedef struct LNode
+{
+
+int number,password;//num用来存储人的序号，pwd用来存储人的密码
+struct LNode next;
+}SLX;
+
+struct LNode head,p,*pt; //定义结点
+
+//2 、创建循环链表函数
+
+int CreatLinkListFunction(int n) //参数n传递人数，
+{
+
+int i;
+head=(struct LNode)malloc(sizeof(SLX)); //创建一个带头结点的链表
+p=head;
+for(i=1;i&lt;n;i++)
+{
+pt=(struct LNode*)malloc(sizeof(SLX));
+p-&gt;next=pt;
+p=pt;
+}
+p-&gt;next=head; //构成循环链表
+pt=head;
+return 0;
+}
+//3.创建输入密码函数
+int EnterPassword(int n) //参数n传递人数
+
+{
+int i,k;
+printf(“\n请输入密码: \n”);
+for( i=1;i&lt;=n;i++)
+{
+scanf(“%d”,&amp;k);
+pt-&gt;number=i; //num存储人的序号
+pt-&gt;password=k; //pwd存储人的密码
+pt=pt-&gt;next;
+}
+pt=p;//创建循环链表 此时P是头结点head 这个函数存入密码 之后再一次返回密码
+return 0;
+}
+//4、创建输出函数
+int OutListFunction(int m,int n)
+
+//参数m、n传递报数上限值和人数
+
+{
+int i,a;
+for(i=1;i&lt;=n;i++) //用一个for循环搜索循环链表
+{
+for(a=1;a&lt;m;a++) //删除结点
+{
+pt=pt-&gt;next;
+}
+p=pt-&gt;next;
+m=p-&gt;password;
+printf(“%d “,p-&gt;number); //输出人的序号
+pt-&gt;next=p-&gt;next;
+free(p); //释放动态申请的结点空间
+}
+return 0;
+}
+//主函数
+int main()
+{
+
+int m,n;//m为报数上限值，n为人数
+printf(“\n参数m、n传递报数上限值和人数;\n”);
+printf(“\n请输入 m 和n: \n”);
+scanf(“%d %d”,&amp;m,&amp;n);
+CreatLinkListFunction(n); //调用创建链表函数
+EnterPassword(n); //调用输入密码函数
+printf(“\n出队的人依次是:\n”);
+OutListFunction( m,n); //调用输出链表函数
+return 0;
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/" data-id="ckc3cc67q000654v3aqt8d6bj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-数据结构之单链表" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%8D%95%E9%93%BE%E8%A1%A8/" class="article-date">
+  <time datetime="2020-06-29T11:45:26.000Z" itemprop="datePublished">2020-06-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/06/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%8D%95%E9%93%BE%E8%A1%A8/">数据结构实验1-1</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>单链表基本操作</p>
+<pre><code>#include&lt;stdio.h&gt;
+#include&lt;stdlib.h&gt;
+#include&lt;iostream&gt;
+using namespace std;
+
+//定义单链表结点结构体
+
+typedef int ElemType;
+
+typedef struct Node
+{
+
+ElemType data;
+
+struct Node *next;
+
+}LNode,*LinkList;
+
+//建立一个带头结点的单链表
+
+void Build(LinkList L)
+{
+
+int n; 
+LinkList p,q;
+
+p=L;
+
+printf(&quot;输入n和n个数字：\n&quot;);
+
+scanf(&quot;%d&quot;,&amp;n);
+
+while(n--)
+{
+
+    q=(LinkList)malloc(sizeof(LNode));
+
+    scanf(&quot;%d&quot;,&amp;q-&gt;data);
+
+    q-&gt;next=NULL;
+
+    p-&gt;next=q;
+
+    p=q;
+}}
+
+//求单链表的长度
+
+void LinkLength(LinkList L)
+
+{
+
+int num = 0;
+
+LinkList p;
+
+p=L-&gt;next;
+
+while(p)
+{
+
+    num++;
+
+    printf(&quot;%3d&quot;,p-&gt;data);
+
+    p=p-&gt;next;
+
+}
+printf(&quot;长度为：%d\n&quot;,num);}
+
+//查找值为x的元素值q
+
+void Find(LinkList L,int x)
+{
+
+LinkList p;
+
+p=L;
+
+int i,b=1,a;
+
+while(p-&gt;next &amp;&amp;p-&gt;next-&gt;data!=x)
+
+    {
+    p=p-&gt;next;
+
+    b++;
+    }
+
+if(p-&gt;next)
+    {
+
+    printf(&quot;%d的p位置为：%d\n\n&quot;,x,b);
+
+    printf(&quot;是否需要修改值 1或0\n&quot;);
+
+    cin&gt;&gt;a;
+
+    if(a==1)
+    {
+
+    printf(&quot;修改的值为\n&quot;); 
+
+    cin&gt;&gt;i;
+
+    p-&gt;next-&gt;data=i;
+
+    printf(&quot;修改成功\n\n&quot;);
+
+    }
+else
+
+    printf(&quot;取消修改!!\n\n&quot;);
+
+    }
+else
+
+printf(&quot;没找到!!\n\n&quot;);} 
+
+//插入值为x的结点
+
+void ListInsert(LinkList L,int x)
+{
+LinkList p,q;
+
+p=L;
+
+int b;//插入的位置 
+
+while(p-&gt;next&amp;&amp;p-&gt;next-&gt;data==x)
+
+    p=p-&gt;next;
+
+if(p-&gt;next)
+{
+
+    printf(&quot;请输入要插入的位置\n&quot;);
+
+    cin&gt;&gt;b;
+
+    for(int i=0;i&lt;b-1;i++)
+    {
+
+        p=p-&gt;next;
+
+    }
+    q=new LNode;
+
+    q-&gt;data=x;
+
+    q-&gt;next=p-&gt;next;
+
+    p-&gt;next=q;
+
+    printf(&quot;插入成功!!\n\n&quot;,x);}}
+
+//删除值为x的结点
+
+void Delete(LinkList L,int x)
+{
+
+LinkList p,q;
+
+p=L;
+
+int b=0;//删除的位置 
+
+while(p-&gt;next &amp;&amp;b&lt;x-1)
+{
+
+        p=p-&gt;next;
+
+        ++b;
+}
+
+if(p-&gt;next)
+{ 
+
+    q=p-&gt;next;
+
+    p-&gt;next=q-&gt;next;
+
+    free(q);
+
+    printf(&quot;删除成功!!\n\n&quot;,x);}}
+
+void Tips()
+{
+
+printf(&quot;\n&quot;);
+
+printf(&quot;根据按键选择相应的操作：\n&quot;);
+
+printf(&quot;&lt;1&gt;输出单链表的数据元素:\n&quot;);
+
+printf(&quot;&lt;2&gt;查找修改元素:\n&quot;);
+
+printf(&quot;&lt;3&gt;插入结点:\n&quot;);
+
+printf(&quot;&lt;4&gt;删除结点:\n&quot;);
+
+printf(&quot;&lt;0&gt;退出:\n&quot;);
+
+}
+主函数
+
+int main()
+{
+
+int op,x;
+LinkList L;
+L = (LinkList)malloc(sizeof(LNode));
+L-&gt;next=NULL;
+L-&gt;data=-1;
+Build(L);
+Tips();
+scanf(&quot;%d&quot;,&amp;op);
+while(op)
+{
+    switch(op)
+    {
+    case 1:LinkLength(L);
+        break;
+    case 2:
+        printf(&quot;查找和修改:\n&quot;);
+        scanf(&quot;%d&quot;,&amp;x);
+        Find(L,x);
+        break;
+    case 3:
+        printf(&quot;插入的值:\n&quot;);
+        scanf(&quot;%d&quot;,&amp;x);
+        ListInsert(L,x);
+        break;
+    case 4:
+        printf(&quot;删除位置:\n&quot;);
+        scanf(&quot;%d&quot;,&amp;x);
+        Delete(L,x);
+        break;
+    }
+        scanf(&quot;%d&quot;,&amp;op);
+}
+return 0;
+
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/06/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E5%8D%95%E9%93%BE%E8%A1%A8/" data-id="ckc3cc67y000754v31vl5eshm" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/06/10/hello-world/" class="article-date">
@@ -131,7 +1133,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
     </div>
   </div>
 
@@ -144,7 +1146,23 @@
       <ul>
         
           <li>
-            <a href="/2020/06/10/hello-world/">Hello World</a>
+            <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/">centos7上安装vpp</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/">Python列表和元组</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/">图的遍历</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E4%B9%8B%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B/">Python之数字类型</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/">Python之turtle库</a>
           </li>
         
       </ul>

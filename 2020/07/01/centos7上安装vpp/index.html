@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>centos7上安装vpp | Hi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在VMware虚拟机里面的linux操作系统下centos7上的安装以及我遇到的一些错误 首先需要有centos7系统，可在官网下载，在安装完这些之后，开始安装vpp 我使用的是yum安装，首先遇到的问题没有联网（测试是否有网络可用ping www.baidu.com，也可以用浏览器搜网址查看是否有网络），可在编辑--虚拟网络编辑器里修改，我用的桥接模式-直接连接物理网络，可以自己来回换看看哪种模">
+<meta property="og:type" content="article">
+<meta property="og:title" content="centos7上安装vpp">
+<meta property="og:url" content="http://yoursite.com/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/index.html">
+<meta property="og:site_name" content="Hi">
+<meta property="og:description" content="在VMware虚拟机里面的linux操作系统下centos7上的安装以及我遇到的一些错误 首先需要有centos7系统，可在官网下载，在安装完这些之后，开始安装vpp 我使用的是yum安装，首先遇到的问题没有联网（测试是否有网络可用ping www.baidu.com，也可以用浏览器搜网址查看是否有网络），可在编辑--虚拟网络编辑器里修改，我用的桥接模式-直接连接物理网络，可以自己来回换看看哪种模">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-01T12:32:37.000Z">
+<meta property="article:modified_time" content="2020-07-01T12:32:55.197Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hi" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hi</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-centos7上安装vpp" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/" class="article-date">
+  <time datetime="2020-07-01T12:32:37.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      centos7上安装vpp
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在VMware虚拟机里面的linux操作系统下centos7上的安装以及我遇到的一些错误</p>
+<p>首先需要有centos7系统，可在官网下载，在安装完这些之后，开始安装vpp</p>
+<p>我使用的是yum安装，首先遇到的问题没有联网（测试是否有网络可用ping <a href="http://www.baidu.com，也可以用浏览器搜网址查看是否有网络），可在编辑--虚拟网络编辑器里修改，我用的桥接模式-直接连接物理网络，可以自己来回换看看哪种模式下会有网络。重启网络可用命令service" target="_blank" rel="noopener">www.baidu.com，也可以用浏览器搜网址查看是否有网络），可在编辑--虚拟网络编辑器里修改，我用的桥接模式-直接连接物理网络，可以自己来回换看看哪种模式下会有网络。重启网络可用命令service</a> network restart，也可以关机重启。</p>
+<p>1.添加yum源文件</p>
+<p>[root@localhost ~]# touch /etc/yum.repos.d/vpp.repo<br>[root@localhost ~]# vi /etc/yum.repos.d/vpp.repo</p>
+<p>将下面内容插入到文件中并保存：</p>
+<p>[fdio-stable-1801]<br>name=fd.io stable/1801 branch latest merge<br>baseurl=<a href="https://nexus.fd.io/content/repositories/fd.io.centos7/" target="_blank" rel="noopener">https://nexus.fd.io/content/repositories/fd.io.centos7/</a><br>enabled=1<br>gpgcheck=0</p>
+<p>我遇到文件只可读不可编辑，可用命令sudo chmod 666 +要修改的文件路径//666表示可读可改，222表示只可读</p>
+<p>2.更新源缓存</p>
+<p>[root@localhost ~]# yum clean all<br>[root@localhost ~]# yum makecache<br>[root@localhost ~]# yum install -y epel-release python-pip</p>
+<p>3.安装vpp</p>
+<p>[root@localhost ~]# yum install vpp -y</p>
+<p>不联网是不能下载的，首先需要保证有网络连接</p>
+<p>4.可选安装</p>
+<p>[root@localhost ~]# yum install -y vpp-plugins</p>
+<p>5.启动vpp</p>
+<p>[root@localhost ~]# systemctl enable vpp<br>[root@localhost ~]# systemctl start vpp<br>[root@localhost ~]# systemctl status vpp.service</p>
+<p>6.至此没出问题应该是完成了安装，测试是否安装成功：</p>
+<p>[root@localhost ~]# sudo vppctl</p>
+<p>启动两个vpp，然后需要配置文件，文件可设置在任意目录下，我设置在了根目录下</p>
+<p>文件名为startup1.conf</p>
+<p>内容如下</p>
+<p>unix {cli-listen /run/vpp/cli-vpp1.sock}<br>api-segment { prefix vpp1 }<br>plugins { plugin dpdk_plugin.so { disable } }</p>
+<p>文件名为startup2.conf</p>
+<p>内容如下</p>
+<p>unix {cli-listen /run/vpp/cli-vpp2.sock}<br>api-segment { prefix vpp2 }<br>plugins { plugin dpdk_plugin.so { disable } }</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/" data-id="ckc3cc67n000354v3btew686p" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Python列表和元组</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/">centos7上安装vpp</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/">Python列表和元组</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/%E5%9B%BE%E7%9A%84%E9%81%8D%E5%8E%86/">图的遍历</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E4%B9%8B%E6%95%B0%E5%AD%97%E7%B1%BB%E5%9E%8B/">Python之数字类型</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E4%B9%8Bturtle%E5%BA%93/">Python之turtle库</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
