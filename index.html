@@ -64,42 +64,6 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-国密SM4算法" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/" class="article-date">
-  <time datetime="2020-07-01T12:42:16.000Z" itemprop="datePublished">2020-07-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/">国密SM4算法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/" data-id="ckc3ctj050001wkv34rqr77xa" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
     <article id="post-D-H秘钥交换协议" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/" class="article-date">
@@ -1113,6 +1077,125 @@ return 0;
 
 
   
+    <article id="post-数据结构之约瑟夫" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/" class="article-date">
+  <time datetime="2020-07-01T12:24:56.000Z" itemprop="datePublished">2020-07-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/">数据结构1-2约瑟夫</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>问题描述：约瑟夫（Joseph）问题的一种描述是：编号为1,2,…,n的n个人按顺时针方向围坐一圈，每人持有一个密码（正整数）。一开始任选一个正整数作为报数上限值m，从第一个人开始按顺时针方向自1开始顺序报数，报到m时停止报数。报m的人出列，将他的密码作为新的m值，从他在顺时针方向上的下一个人开始重新从1报数，如此下去，直至所有人全部出列为止。试设计一个程序求出出列顺序。</p>
+<p>[测试数据]<br>由学生任意指定。</p>
+<p>　　如：m的初值为20；n的值为7；密码：3，1，7，2，4，8，4；<br>（正确的输出结果应为6，1，4，7，2，3，5）。</p>
+<pre><code>#include&lt;stdio.h&gt;
+#include&lt;malloc.h&gt;
+//1.元素类型，结点类型和指针类型
+typedef struct LNode
+{
+
+int number,password;//num用来存储人的序号，pwd用来存储人的密码
+struct LNode next;
+}SLX;
+
+struct LNode head,p,*pt; //定义结点
+
+//2 、创建循环链表函数
+
+int CreatLinkListFunction(int n) //参数n传递人数，
+{
+
+int i;
+head=(struct LNode)malloc(sizeof(SLX)); //创建一个带头结点的链表
+p=head;
+for(i=1;i&lt;n;i++)
+{
+pt=(struct LNode*)malloc(sizeof(SLX));
+p-&gt;next=pt;
+p=pt;
+}
+p-&gt;next=head; //构成循环链表
+pt=head;
+return 0;
+}
+//3.创建输入密码函数
+int EnterPassword(int n) //参数n传递人数
+
+{
+int i,k;
+printf(“\n请输入密码: \n”);
+for( i=1;i&lt;=n;i++)
+{
+scanf(“%d”,&amp;k);
+pt-&gt;number=i; //num存储人的序号
+pt-&gt;password=k; //pwd存储人的密码
+pt=pt-&gt;next;
+}
+pt=p;//创建循环链表 此时P是头结点head 这个函数存入密码 之后再一次返回密码
+return 0;
+}
+//4、创建输出函数
+int OutListFunction(int m,int n)
+
+//参数m、n传递报数上限值和人数
+
+{
+int i,a;
+for(i=1;i&lt;=n;i++) //用一个for循环搜索循环链表
+{
+for(a=1;a&lt;m;a++) //删除结点
+{
+pt=pt-&gt;next;
+}
+p=pt-&gt;next;
+m=p-&gt;password;
+printf(“%d “,p-&gt;number); //输出人的序号
+pt-&gt;next=p-&gt;next;
+free(p); //释放动态申请的结点空间
+}
+return 0;
+}
+//主函数
+int main()
+{
+
+int m,n;//m为报数上限值，n为人数
+printf(“\n参数m、n传递报数上限值和人数;\n”);
+printf(“\n请输入 m 和n: \n”);
+scanf(“%d %d”,&amp;m,&amp;n);
+CreatLinkListFunction(n); //调用创建链表函数
+EnterPassword(n); //调用输入密码函数
+printf(“\n出队的人依次是:\n”);
+OutListFunction( m,n); //调用输出链表函数
+return 0;
+}</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/01/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E4%B9%8B%E7%BA%A6%E7%91%9F%E5%A4%AB/" data-id="ckc3cc67q000654v3aqt8d6bj" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
 
 
   <nav id="page-nav">
@@ -1149,10 +1232,6 @@ return 0;
       <ul>
         
           <li>
-            <a href="/2020/07/01/%E5%9B%BD%E5%AF%86SM4%E7%AE%97%E6%B3%95/">国密SM4算法</a>
-          </li>
-        
-          <li>
             <a href="/2020/07/01/D-H%E7%A7%98%E9%92%A5%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE/">D-H秘钥交换协议</a>
           </li>
         
@@ -1166,6 +1245,10 @@ return 0;
         
           <li>
             <a href="/2020/07/01/centos7%E4%B8%8A%E5%AE%89%E8%A3%85vpp/">centos7上安装vpp</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/01/Python%E5%88%97%E8%A1%A8%E5%92%8C%E5%85%83%E7%BB%84/">Python列表和元组</a>
           </li>
         
       </ul>
